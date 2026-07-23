@@ -1,0 +1,35 @@
+{
+  "schema": "matrix-leaf-trace/1",
+  "task_id": "3ea2f5b9-699e-4d9d-b192-0afea45deddd",
+  "attempt_no": 1,
+  "orchestrator": {
+    "skill": "matrix-orchestrator",
+    "model": "gpt-4o",
+    "delegated_to": [
+      "weather"
+    ]
+  },
+  "leaves": [
+    {
+      "skill": "weather",
+      "model": "openai/gpt-4o",
+      "provider": "openai",
+      "allow_hosts": [
+        "api.open-meteo.com",
+        "geocoding-api.open-meteo.com"
+      ],
+      "tools": [
+        {
+          "name": "current_weather",
+          "calls": 1,
+          "ok": 1,
+          "errors": 0
+        }
+      ],
+      "wrote": [],
+      "promoted": [
+        "weather/weather.md"
+      ]
+    }
+  ]
+}
