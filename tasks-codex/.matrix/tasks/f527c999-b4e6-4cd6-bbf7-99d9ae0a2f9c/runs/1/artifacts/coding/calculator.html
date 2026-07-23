@@ -1,0 +1,230 @@
+<!-- [codex-cost-20260723-183107] -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Calculator</title>
+<style>
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+  body {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #f2f2f2;
+    font-family: Arial, sans-serif;
+  }
+  .calculator {
+    width: 280px;
+    background: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+    padding: 16px;
+  }
+  .display {
+    background: #222;
+    color: #fff;
+    border-radius: 6px;
+    padding: 16px 12px;
+    margin-bottom: 12px;
+    text-align: right;
+    font-size: 28px;
+    min-height: 40px;
+    overflow-wrap: anywhere;
+  }
+  .buttons {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+  }
+  button {
+    border: none;
+    outline: none;
+    cursor: pointer;
+    font-size: 16px;
+    padding: 16px 0;
+    border-radius: 6px;
+    background: #e0e0e0;
+    color: #222;
+  }
+  button:hover {
+    background: #d0d0d0;
+  }
+  button:active {
+    background: #c0c0c0;
+  }
+  .btn-operator {
+    background: #f0a030;
+    color: #fff;
+  }
+  .btn-operator:hover {
+    background: #e08f1e;
+  }
+  .btn-equals {
+    background: #3a7bd5;
+    color: #fff;
+    grid-column: span 2;
+  }
+  .btn-equals:hover {
+    background: #2f66b3;
+  }
+  .btn-clear {
+    background: #e04b4b;
+    color: #fff;
+    grid-column: span 2;
+  }
+  .btn-clear:hover {
+    background: #c93d3d;
+  }
+  .btn-zero {
+    grid-column: span 2;
+  }
+</style>
+</head>
+<body>
+
+  <div class="calculator">
+    <div class="display" id="display">0</div>
+
+    <div class="buttons">
+      <button class="btn-clear" id="clearBtn">C</button>
+      <button class="btn-operator" data-operator="/">÷</button>
+
+      <button data-number="7">7</button>
+      <button data-number="8">8</button>
+      <button data-number="9">9</button>
+      <button class="btn-operator" data-operator="*">×</button>
+
+      <button data-number="4">4</button>
+      <button data-number="5">5</button>
+      <button data-number="6">6</button>
+      <button class="btn-operator" data-operator="-">−</button>
+
+      <button data-number="1">1</button>
+      <button data-number="2">2</button>
+      <button data-number="3">3</button>
+      <button class="btn-operator" data-operator="+">+</button>
+
+      <button class="btn-zero" data-number="0">0</button>
+      <button data-number=".">.</button>
+      <button class="btn-equals" id="equalsBtn">=</button>
+    </div>
+  </div>
+
+<script>
+  (function () {
+    "use strict";
+
+    const display = document.getElementById("display");
+
+    let currentValue = "0";
+    let previousValue = null;
+    let operator = null;
+    let shouldResetInput = false;
+
+    function updateDisplay() {
+      display.textContent = currentValue;
+    }
+
+    function inputNumber(num) {
+      if (shouldResetInput) {
+        currentValue = "0";
+        shouldResetInput = false;
+      }
+      if (num === "." ) {
+        if (currentValue.includes(".")) return;
+        currentValue += ".";
+      } else if (currentValue === "0") {
+        currentValue = num;
+      } else {
+        currentValue += num;
+      }
+      updateDisplay();
+    }
+
+    function inputOperator(op) {
+      if (operator !== null && !shouldResetInput) {
+        calculate();
+      }
+      previousValue = parseFloat(currentValue);
+      operator = op;
+      shouldResetInput = true;
+    }
+
+    function calculate() {
+      if (operator === null || previousValue === null) return;
+      const current = parseFloat(currentValue);
+      let result;
+
+      switch (operator) {
+        case "+":
+          result = previousValue + current;
+          break;
+        case "-":
+          result = previousValue - current;
+          break;
+        case "*":
+          result = previousValue * current;
+          break;
+        case "/":
+          result = current === 0 ? "Error" : previousValue / current;
+          break;
+        default:
+          return;
+      }
+
+      currentValue = (typeof result === "number" && !Number.isInteger(result))
+        ? parseFloat(result.toFixed(8)).toString()
+        : result.toString();
+
+      operator = null;
+      previousValue = null;
+      shouldResetInput = true;
+      updateDisplay();
+    }
+
+    function clearAll() {
+      currentValue = "0";
+      previousValue = null;
+      operator = null;
+      shouldResetInput = false;
+      updateDisplay();
+    }
+
+    document.querySelectorAll("[data-number]").forEach((button) => {
+      button.addEventListener("click", () => {
+        inputNumber(button.getAttribute("data-number"));
+      });
+    });
+
+    document.querySelectorAll("[data-operator]").forEach((button) => {
+      button.addEventListener("click", () => {
+        inputOperator(button.getAttribute("data-operator"));
+      });
+    });
+
+    document.getElementById("equalsBtn").addEventListener("click", calculate);
+    document.getElementById("clearBtn").addEventListener("click", clearAll);
+
+    document.addEventListener("keydown", (e) => {
+      if (e.key >= "0" && e.key <= "9") inputNumber(e.key);
+      if (e.key === ".") inputNumber(".");
+      if (["+", "-", "*", "/"].includes(e.key)) inputOperator(e.key);
+      if (e.key === "Enter" || e.key === "=") {
+        e.preventDefault();
+        calculate();
+      }
+      if (e.key === "Escape") clearAll();
+    });
+
+    updateDisplay();
+  })();
+</script>
+
+</body>
+</html>
