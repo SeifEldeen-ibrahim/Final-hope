@@ -1,0 +1,43 @@
+{
+  "schema": "matrix-leaf-trace/1",
+  "task_id": "90e18b63-00c4-4d79-a6ab-adecaf9b5a49",
+  "attempt_no": 1,
+  "orchestrator": {
+    "skill": "matrix-orchestrator",
+    "model": "gpt-4o",
+    "delegated_to": [
+      "notion"
+    ]
+  },
+  "leaves": [
+    {
+      "skill": "notion",
+      "model": "openai/gpt-4o",
+      "provider": "openai",
+      "allow_hosts": [],
+      "tools": [
+        {
+          "name": "run_command",
+          "calls": 2,
+          "ok": 2,
+          "errors": 0
+        }
+      ],
+      "wrote": [],
+      "promoted": [
+        "notion/notion.md"
+      ]
+    },
+    {
+      "skill": "notion",
+      "model": "openai/gpt-4o",
+      "provider": "openai",
+      "allow_hosts": [],
+      "tools": [],
+      "wrote": [],
+      "promoted": [
+        "notion/notion.md"
+      ]
+    }
+  ]
+}
